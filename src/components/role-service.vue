@@ -379,7 +379,6 @@ export default defineComponent({
           if (child.label === target.label) {
             items = JSON.parse(JSON.stringify(child));
             childData = items;
-            child.label = '';
 
             let indexOfParent: number;
             for (let index = 0; index < data.value.length; index++) {
