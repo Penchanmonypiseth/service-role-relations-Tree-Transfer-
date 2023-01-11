@@ -11,7 +11,7 @@
         <tbody class="body-half-screen">
           <tr>
             <td>
-              <el-tree :data="data" @dblclick="doubleClickNode()" @node-click="handleNodeClick" />
+              <el-tree :data="data" @dblclick="doubleClickNodeAssign()" @node-click="handleNodeClick" />
             </td>
           </tr>
         </tbody>
@@ -33,7 +33,7 @@
         </thead>
         <tbody class="body-half-screen">
           <td>
-            <el-tree :data="unassignBox" />
+            <el-tree :data="unassignBox" @dblclick="doubleClickNodeUnssign()" @node-click="handleNodeClick" />
           </td>
         </tbody>
       </table>
@@ -349,15 +349,18 @@ export default defineComponent({
     const handleNodeClick = (data: Tree) => {
       selectedTree.value = data;
     };
-    const doubleClickNode = () => {
-      doubleClickParentNode();
-      doubleClickSingleNode();
-    };
 
-    const doubleClickParentNode = () => {
+    // ===================================================
+    // ==========> Turn to Unassign Listbox <==========
+    // ===================================================
+    const doubleClickNodeAssign = () => {
+      doubleClickParentNodeAssign();
+      doubleClickSingleNodeAssign();
+    };
+    const doubleClickParentNodeAssign = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
-      if (!matchParent(target.label)) {
+      if (!matchParentAssign(target.label)) {
         data.value.filter((myData) => {
           if (myData.label === target.label) {
             items = JSON.parse(JSON.stringify(myData));
@@ -401,7 +404,7 @@ export default defineComponent({
       }
     };
 
-    const doubleClickSingleNode = () => {
+    const doubleClickSingleNodeAssign = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
 
@@ -412,7 +415,7 @@ export default defineComponent({
             items.children = [];
             items.children?.push(target);
 
-            if (matchParent(items.label)) {
+            if (matchParentAssign(items.label)) {
               unassignBox.value.filter((match) => {
                 if (match.label === items.label) {
                   match.children?.push(list);
@@ -434,13 +437,165 @@ export default defineComponent({
                   data.value.splice(indexOfParent, 1);
                 }
               }
+            } else {
+              let childData: Tree;
+              unassignBox.value.filter((child) => {
+                if (child.label === target.label) {
+                  items = JSON.parse(JSON.stringify(child));
+                  childData = items;
+
+                  let indexOfParent: number;
+                  for (let index = 0; index < unassignBox.value.length; index++) {
+                    const element = unassignBox.value[index];
+                    if (element.label == child.label) {
+                      indexOfParent = index;
+                      unassignBox.value.splice(indexOfParent, 1);
+                    }
+                  }
+                }
+              });
+
+              data.value.filter((find) => {
+                if (find.label === target.label) {
+                  childData.children?.forEach((currentChilds) => {
+                    find.children?.push(currentChilds);
+                  });
+                }
+              });
             }
           }
         });
       });
     };
-    const matchParent = (parentName: string) => {
+
+    const matchParentAssign = (parentName: string) => {
       const filterResult = unassignBox.value.filter((value) => value.label === parentName);
+      if (filterResult.length !== 0) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    // ===================================================
+    // ==========> Turn Back to Assign Listbox <==========
+    // ===================================================
+    const doubleClickNodeUnssign = () => {
+      doubleClickParentNodeUnassign();
+      doubleClickSingleNodeUnassign();
+    };
+    const doubleClickParentNodeUnassign = () => {
+      let target = JSON.parse(JSON.stringify(selectedTree.value));
+      let items: Tree;
+      if (!matchParentUnassign(target.label)) {
+        unassignBox.value.filter((myData) => {
+          if (myData.label === target.label) {
+            items = JSON.parse(JSON.stringify(myData));
+            data.value.push(items);
+
+            let indexOfParent: number;
+            for (let index = 0; index < unassignBox.value.length; index++) {
+              const element = unassignBox.value[index];
+              if (element.label == myData.label) {
+                indexOfParent = index;
+                unassignBox.value.splice(indexOfParent, 1);
+              }
+            }
+          }
+        });
+      } else {
+        let childData: Tree;
+        unassignBox.value.filter((child) => {
+          if (child.label === target.label) {
+            items = JSON.parse(JSON.stringify(child));
+            childData = items;
+
+            let indexOfParent: number;
+            for (let index = 0; index < unassignBox.value.length; index++) {
+              const element = unassignBox.value[index];
+              if (element.label == child.label) {
+                indexOfParent = index;
+                unassignBox.value.splice(indexOfParent, 1);
+              }
+            }
+          }
+        });
+
+        data.value.filter((find) => {
+          if (find.label === target.label) {
+            childData.children?.forEach((currentChilds) => {
+              find.children?.push(currentChilds);
+            });
+          }
+        });
+      }
+    };
+    const doubleClickSingleNodeUnassign = () => {
+      let target = JSON.parse(JSON.stringify(selectedTree.value));
+      let items: Tree;
+
+      unassignBox.value.filter((myData) => {
+        myData.children?.filter((list) => {
+          if (list.label === target.label) {
+            items = JSON.parse(JSON.stringify(myData));
+            items.children = [];
+            items.children?.push(target);
+
+            if (matchParentUnassign(items.label)) {
+              data.value.filter((match) => {
+                if (match.label === items.label) {
+                  match.children?.push(list);
+                }
+              });
+            } else {
+              data.value.push(items);
+            }
+            myData.children = myData.children?.filter((found) => {
+              return found.label !== target.label;
+            });
+
+            if (myData.children?.length == 0) {
+              let indexOfParent: number;
+              for (let index = 0; index < unassignBox.value.length; index++) {
+                const element = unassignBox.value[index];
+                if (element.label == myData.label) {
+                  indexOfParent = index;
+                  unassignBox.value.splice(indexOfParent, 1);
+                }
+              }
+            } else {
+              let childData: Tree;
+              data.value.filter((child) => {
+                if (child.label === target.label) {
+                  items = JSON.parse(JSON.stringify(child));
+                  childData = items;
+
+                  let indexOfParent: number;
+                  for (let index = 0; index < data.value.length; index++) {
+                    const element = data.value[index];
+                    if (element.label == child.label) {
+                      indexOfParent = index;
+                      data.value.splice(indexOfParent, 1);
+                    }
+                  }
+                }
+              });
+
+              unassignBox.value.filter((find) => {
+                if (find.label === target.label) {
+                  childData.children?.forEach((currentChilds) => {
+                    find.children?.push(currentChilds);
+                  });
+                }
+              });
+            }
+          }
+        });
+      });
+    };
+
+    const matchParentUnassign = (parentName: string) => {
+      const filterResult = data.value.filter((value) => value.label === parentName);
       if (filterResult.length !== 0) {
         return true;
       } else {
@@ -454,9 +609,12 @@ export default defineComponent({
       unassignBox,
       data,
       handleNodeClick,
-      doubleClickNode,
-      doubleClickParentNode,
-      doubleClickSingleNode,
+      doubleClickNodeAssign,
+      doubleClickParentNodeAssign,
+      doubleClickSingleNodeAssign,
+      doubleClickNodeUnssign,
+      doubleClickParentNodeUnassign,
+      doubleClickSingleNodeUnassign,
     };
   },
 });
