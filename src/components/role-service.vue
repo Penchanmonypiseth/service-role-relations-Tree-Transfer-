@@ -11,19 +11,29 @@
         <tbody class="body-half-screen">
           <tr>
             <td>
-              <el-tree :data="data" @dblclick="doubleClickNodeAssign()" @node-click="handleNodeClick" />
+              <el-tree :data="data" @dblclick="doubleClickAssignNode()" @node-click="handleNodeClick" />
             </td>
           </tr>
         </tbody>
       </table>
-      <!-- <div class="button-wraper">
+
+      <div class="button-wraper">
         <div class="button-transfer">
-          <button>>></button>
-          <button>></button>
-          <button>></button>
-          <button>one</button>
+          <button class="button" @click="btnTransferAllParentAssignNode()">
+            <i class="fa-solid fa-angles-right"></i>
+          </button>
+          <button class="button" @click="btnTransferSingleAssignNode()">
+            <i class="fa-solid fa-angle-right"></i>
+          </button>
+          <button class="button" @click="btnTransferSingleUnassignNode()">
+            <i class="fa-solid fa-angle-left"></i>
+          </button>
+          <button class="button" @click="btnTransferAllParentUnAssignNode()">
+            <i class="fa-solid fa-angles-left"></i>
+          </button>
         </div>
-      </div> -->
+      </div>
+
       <!--Todo: ==========Unassign Table ListBox==========  -->
       <table class="table-scroll small-first-col">
         <thead>
@@ -33,7 +43,7 @@
         </thead>
         <tbody class="body-half-screen">
           <td>
-            <el-tree :data="unassignBox" @dblclick="doubleClickNodeUnssign()" @node-click="handleNodeClick" />
+            <el-tree :data="unassignBox" @dblclick="doubleClickUnssignNode()" @node-click="handleNodeClick" />
           </td>
         </tbody>
       </table>
@@ -350,14 +360,12 @@ export default defineComponent({
       selectedTree.value = data;
     };
 
-    // ===================================================
     // ==========> Turn to Unassign Listbox <==========
-    // ===================================================
-    const doubleClickNodeAssign = () => {
-      doubleClickParentNodeAssign();
-      doubleClickSingleNodeAssign();
+    const doubleClickAssignNode = () => {
+      doubleClickParentAssignNode();
+      doubleClickSingleAssignNode();
     };
-    const doubleClickParentNodeAssign = () => {
+    const doubleClickParentAssignNode = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
       if (!matchParentAssign(target.label)) {
@@ -404,7 +412,7 @@ export default defineComponent({
       }
     };
 
-    const doubleClickSingleNodeAssign = () => {
+    const doubleClickSingleAssignNode = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
 
@@ -477,14 +485,12 @@ export default defineComponent({
       }
     };
 
-    // ===================================================
     // ==========> Turn Back to Assign Listbox <==========
-    // ===================================================
-    const doubleClickNodeUnssign = () => {
-      doubleClickParentNodeUnassign();
-      doubleClickSingleNodeUnassign();
+    const doubleClickUnssignNode = () => {
+      doubleClickParentUnassignNode();
+      doubleClickSingleUnassignNode();
     };
-    const doubleClickParentNodeUnassign = () => {
+    const doubleClickParentUnassignNode = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
       if (!matchParentUnassign(target.label)) {
@@ -530,7 +536,7 @@ export default defineComponent({
         });
       }
     };
-    const doubleClickSingleNodeUnassign = () => {
+    const doubleClickSingleUnassignNode = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
 
@@ -594,6 +600,167 @@ export default defineComponent({
       });
     };
 
+    // ========= Button transfer =========
+    const btnTransferAllParentAssignNode = () => {
+      data.value.filter((parentData) => {
+        if (!matchParentAssign(parentData.label)) {
+          unassignBox.value.push(parentData);
+          data.value = [];
+        } else {
+          unassignBox.value.filter((list) => {
+            if (matchParentAssign(parentData.label)) {
+              parentData.children?.filter((value) => {
+                list.children?.push(value);
+              });
+            }
+          });
+        }
+      });
+    };
+
+    const btnTransferSingleAssignNode = () => {
+      let target = JSON.parse(JSON.stringify(selectedTree.value));
+      let items: Tree;
+
+      data.value.filter((myData) => {
+        myData.children?.filter((list) => {
+          if (list.label === target.label) {
+            items = JSON.parse(JSON.stringify(myData));
+            items.children = [];
+            items.children?.push(target);
+
+            if (matchParentAssign(items.label)) {
+              unassignBox.value.filter((match) => {
+                if (match.label === items.label) {
+                  match.children?.push(list);
+                }
+              });
+            } else {
+              unassignBox.value.push(items);
+            }
+            myData.children = myData.children?.filter((found) => {
+              return found.label !== target.label;
+            });
+
+            if (myData.children?.length == 0) {
+              let indexOfParent: number;
+              for (let index = 0; index < data.value.length; index++) {
+                const element = data.value[index];
+                if (element.label == myData.label) {
+                  indexOfParent = index;
+                  data.value.splice(indexOfParent, 1);
+                }
+              }
+            } else {
+              let childData: Tree;
+              unassignBox.value.filter((child) => {
+                if (child.label === target.label) {
+                  items = JSON.parse(JSON.stringify(child));
+                  childData = items;
+
+                  let indexOfParent: number;
+                  for (let index = 0; index < unassignBox.value.length; index++) {
+                    const element = unassignBox.value[index];
+                    if (element.label == child.label) {
+                      indexOfParent = index;
+                      unassignBox.value.splice(indexOfParent, 1);
+                    }
+                  }
+                }
+              });
+
+              data.value.filter((find) => {
+                if (find.label === target.label) {
+                  childData.children?.forEach((currentChilds) => {
+                    find.children?.push(currentChilds);
+                  });
+                }
+              });
+            }
+          }
+        });
+      });
+    };
+
+    const btnTransferAllParentUnAssignNode = () => {
+      unassignBox.value.filter((parentData) => {
+        if (!matchParentUnassign(parentData.label)) {
+          data.value.push(parentData);
+          unassignBox.value = [];
+        } else {
+          data.value.filter((list) => {
+            if (matchParentUnassign(parentData.label)) {
+              parentData.children?.filter((value) => {
+                list.children?.push(value);
+              });
+            }
+          });
+        }
+      });
+    };
+    const btnTransferSingleUnassignNode = () => {
+      let target = JSON.parse(JSON.stringify(selectedTree.value));
+      let items: Tree;
+
+      unassignBox.value.filter((myData) => {
+        myData.children?.filter((list) => {
+          if (list.label === target.label) {
+            items = JSON.parse(JSON.stringify(myData));
+            items.children = [];
+            items.children?.push(target);
+
+            if (matchParentUnassign(items.label)) {
+              data.value.filter((match) => {
+                if (match.label === items.label) {
+                  match.children?.push(list);
+                }
+              });
+            } else {
+              data.value.push(items);
+            }
+            myData.children = myData.children?.filter((found) => {
+              return found.label !== target.label;
+            });
+
+            if (myData.children?.length == 0) {
+              let indexOfParent: number;
+              for (let index = 0; index < unassignBox.value.length; index++) {
+                const element = unassignBox.value[index];
+                if (element.label == myData.label) {
+                  indexOfParent = index;
+                  unassignBox.value.splice(indexOfParent, 1);
+                }
+              }
+            } else {
+              let childData: Tree;
+              data.value.filter((child) => {
+                if (child.label === target.label) {
+                  items = JSON.parse(JSON.stringify(child));
+                  childData = items;
+
+                  let indexOfParent: number;
+                  for (let index = 0; index < data.value.length; index++) {
+                    const element = data.value[index];
+                    if (element.label == child.label) {
+                      indexOfParent = index;
+                      data.value.splice(indexOfParent, 1);
+                    }
+                  }
+                }
+              });
+
+              unassignBox.value.filter((find) => {
+                if (find.label === target.label) {
+                  childData.children?.forEach((currentChilds) => {
+                    find.children?.push(currentChilds);
+                  });
+                }
+              });
+            }
+          }
+        });
+      });
+    };
     const matchParentUnassign = (parentName: string) => {
       const filterResult = data.value.filter((value) => value.label === parentName);
       if (filterResult.length !== 0) {
@@ -609,12 +776,23 @@ export default defineComponent({
       unassignBox,
       data,
       handleNodeClick,
-      doubleClickNodeAssign,
-      doubleClickParentNodeAssign,
-      doubleClickSingleNodeAssign,
-      doubleClickNodeUnssign,
-      doubleClickParentNodeUnassign,
-      doubleClickSingleNodeUnassign,
+
+      // Return Back Unassignlist Box
+      doubleClickAssignNode,
+      doubleClickParentAssignNode,
+      doubleClickSingleAssignNode,
+
+      // Turn Back Assignlist Box
+      doubleClickUnssignNode,
+      doubleClickParentUnassignNode,
+      doubleClickSingleUnassignNode,
+
+      // Button
+      btnTransferAllParentAssignNode,
+      btnTransferSingleAssignNode,
+
+      btnTransferAllParentUnAssignNode,
+      btnTransferSingleUnassignNode,
     };
   },
 });
@@ -751,7 +929,7 @@ input {
   display: block;
   position: relative;
   width: 500px;
-  height: 150px;
+  height: 350px;
   overflow-y: scroll;
   /* Decoration */
   border-top: 1px solid rgba(0, 0, 0, 0.2);
@@ -789,5 +967,64 @@ input {
 #unassign-td {
   font-size: 13px;
   color: rgb(109, 105, 105);
+}
+.button-wraper {
+  width: 100px;
+  height: 200px;
+}
+.button-transfer button {
+  display: inline-block;
+  width: 100%;
+  margin: 20px 0px 0px 0px;
+}
+.button {
+  align-items: center;
+  appearance: none;
+  background-color: #fcfcfd;
+  border-radius: 4px;
+  border-width: 0;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #36395a;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: 'JetBrains Mono', monospace;
+  height: 30px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow 0.15s, transform 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow, transform;
+  font-size: 18px;
+}
+
+.button:focus {
+  box-shadow: #d6d6e7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+    #d6d6e7 0 -3px 0 inset;
+}
+
+.button:hover {
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.button:active {
+  box-shadow: #d6d6e7 0 3px 7px inset;
+  transform: translateY(2px);
+}
+.button i {
+  text-align: center;
+  position: relative;
+  left: 40%;
 }
 </style>
