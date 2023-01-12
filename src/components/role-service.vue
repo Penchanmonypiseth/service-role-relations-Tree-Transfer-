@@ -17,15 +17,16 @@
         </tbody>
       </table>
 
+      <!--Todo: ========== Button Transfer ==========  -->
       <div class="button-wraper">
         <div class="button-transfer">
           <button class="button" @click="btnTransferAllParentAssignNode()">
             <i class="fa-solid fa-angles-right"></i>
           </button>
-          <button class="button" @click="btnTransferSingleAssignNode()">
+          <button class="button" @click="singleTransferAssignBtn()">
             <i class="fa-solid fa-angle-right"></i>
           </button>
-          <button class="button" @click="btnTransferSingleUnassignNode()">
+          <button class="button" @click="singleTransferUnassignBtn()">
             <i class="fa-solid fa-angle-left"></i>
           </button>
           <button class="button" @click="btnTransferAllParentUnAssignNode()">
@@ -50,7 +51,6 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import Tree from '@/Types/Tree';
@@ -354,8 +354,8 @@ export default defineComponent({
         ],
       },
     ]);
-    const unassignBox = ref<Tree[]>([]);
 
+    const unassignBox = ref<Tree[]>([]);
     const handleNodeClick = (data: Tree) => {
       selectedTree.value = data;
     };
@@ -365,6 +365,7 @@ export default defineComponent({
       doubleClickParentAssignNode();
       doubleClickSingleAssignNode();
     };
+
     const doubleClickParentAssignNode = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
@@ -536,6 +537,7 @@ export default defineComponent({
         });
       }
     };
+
     const doubleClickSingleUnassignNode = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
@@ -600,7 +602,7 @@ export default defineComponent({
       });
     };
 
-    // ========= Button transfer =========
+    // ========= Button Assign transfer =========
     const btnTransferAllParentAssignNode = () => {
       data.value.filter((parentData) => {
         if (!matchParentAssign(parentData.label)) {
@@ -608,7 +610,7 @@ export default defineComponent({
           data.value = [];
         } else {
           unassignBox.value.filter((list) => {
-            if (matchParentAssign(parentData.label)) {
+            if (list.label == parentData.label) {
               parentData.children?.filter((value) => {
                 list.children?.push(value);
               });
@@ -681,7 +683,17 @@ export default defineComponent({
         });
       });
     };
+    const singleTransferAssignBtn = () => {
+      btnTransferSingleAssignNode();
+      doubleClickParentAssignNode();
+    };
 
+    const singleTransferUnassignBtn = () => {
+      btnTransferSingleUnassignNode();
+      doubleClickParentUnassignNode();
+    };
+
+    // ========== Button Unassign Transfer ==========
     const btnTransferAllParentUnAssignNode = () => {
       unassignBox.value.filter((parentData) => {
         if (!matchParentUnassign(parentData.label)) {
@@ -689,7 +701,7 @@ export default defineComponent({
           unassignBox.value = [];
         } else {
           data.value.filter((list) => {
-            if (matchParentUnassign(parentData.label)) {
+            if (list.label == parentData.label) {
               parentData.children?.filter((value) => {
                 list.children?.push(value);
               });
@@ -698,6 +710,7 @@ export default defineComponent({
         }
       });
     };
+
     const btnTransferSingleUnassignNode = () => {
       let target = JSON.parse(JSON.stringify(selectedTree.value));
       let items: Tree;
@@ -761,6 +774,7 @@ export default defineComponent({
         });
       });
     };
+
     const matchParentUnassign = (parentName: string) => {
       const filterResult = data.value.filter((value) => value.label === parentName);
       if (filterResult.length !== 0) {
@@ -775,6 +789,8 @@ export default defineComponent({
       value,
       unassignBox,
       data,
+
+      // element plus event target value
       handleNodeClick,
 
       // Return Back Unassignlist Box
@@ -787,12 +803,16 @@ export default defineComponent({
       doubleClickParentUnassignNode,
       doubleClickSingleUnassignNode,
 
-      // Button
+      // Button Transfer
       btnTransferAllParentAssignNode,
       btnTransferSingleAssignNode,
 
       btnTransferAllParentUnAssignNode,
       btnTransferSingleUnassignNode,
+
+      // this function call 2 option to join in this functions
+      singleTransferUnassignBtn,
+      singleTransferAssignBtn,
     };
   },
 });
@@ -907,11 +927,8 @@ input {
   margin: 1rem;
 }
 .table-scroll {
-  /*width:100%; */
   display: block;
   empty-cells: show;
-
-  /* Decoration */
   border-spacing: 0;
   border: 1px solid;
 }
@@ -925,13 +942,12 @@ input {
 }
 
 .table-scroll tbody {
-  /* Position */
   display: block;
   position: relative;
   width: 500px;
   height: 350px;
   overflow-y: scroll;
-  /* Decoration */
+
   border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
@@ -948,9 +964,6 @@ input {
   padding: 1rem;
   text-align: left;
 }
-
-/* Other options */
-
 .table-scroll.small-first-col td:first-child,
 .table-scroll.small-first-col th:first-child {
   flex-basis: 20%;
