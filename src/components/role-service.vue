@@ -65,96 +65,51 @@ export default defineComponent({
         label: 'FRUIT',
         children: [
           {
-            label: 'Banana',
+            label: '1.Banana',
           },
           {
-            label: 'Coconut',
+            label: '2.Coconut',
           },
-          // {
-          //   label: 'Grape',
-          // },
-          // {
-          //   label: 'Mango',
-          // },
-          // {
-          //   label: 'Beans',
-          // },
-          // {
-          //   label: 'Apple',
-          // },
-          // {
-          //   label: 'Orange',
-          // },
-          // {
-          //   label: 'PineApple',
-          // },
-          // {
-          //   label: 'Lemon',
-          // },
-          // {
-          //   label: 'Blue Berry',
-          // },
-          // {
-          //   label: 'Red Buerry',
-          // },
+          {
+            label: '3.Grape',
+          },
+          {
+            label: '4.Mango',
+          },
+          {
+            label: '5.Beans',
+          },
+          {
+            label: '6.Apple',
+          },
+          {
+            label: '7.Orange',
+          },
         ],
       },
       {
         label: 'ANIMAL',
         children: [
           {
-            label: 'Dog',
+            label: '1.Dog',
           },
           {
-            label: 'Cat',
+            label: '2.Cat',
           },
           {
-            label: 'Dragon',
+            label: '3.Dragon',
           },
           {
-            label: 'Ant',
+            label: '4.Ant',
           },
           {
-            label: 'Bat',
+            label: '5.Bat',
           },
           {
-            label: 'Bear',
+            label: '6.Bear',
           },
           {
-            label: 'Bee',
-          },
-          {
-            label: 'Bird',
-          },
-          {
-            label: 'Buffalo',
-          },
-          {
-            label: 'Chicken',
-          },
-          {
-            label: 'Cow',
-          },
-          {
-            label: 'Duck',
-          },
-          {
-            label: 'Elephant',
-          },
-          {
-            label: 'Fish',
-          },
-          {
-            label: 'Fox',
-          },
-          {
-            label: 'Frog',
-          },
-          {
-            label: 'Goose',
-          },
-          {
-            label: 'Goat',
+            label: '7.Bee',
           },
         ],
       },
@@ -162,67 +117,25 @@ export default defineComponent({
         label: 'FOOD',
         children: [
           {
-            label: 'Pizza',
+            label: '1.Pizza',
           },
           {
-            label: 'Pasta',
+            label: '2.Pasta',
           },
           {
-            label: 'Donuts',
+            label: '3.Donuts',
           },
           {
-            label: 'Bread',
+            label: '4.Bread',
           },
           {
-            label: 'Soup',
+            label: '5.Soup',
           },
           {
-            label: 'Cake',
+            label: '6.Cake',
           },
           {
-            label: 'Pan-Cake',
-          },
-          {
-            label: 'Candy',
-          },
-          {
-            label: 'Jam',
-          },
-          {
-            label: 'Hamberger',
-          },
-          {
-            label: 'Coca',
-          },
-          {
-            label: 'Green-Tea',
-          },
-          {
-            label: 'Chocolate-Frappe',
-          },
-          {
-            label: 'Mocha-Frappe',
-          },
-          {
-            label: 'Ice-Latte',
-          },
-          {
-            label: 'Hot-Latte',
-          },
-          {
-            label: 'Salmon',
-          },
-          {
-            label: 'Ice-Cream',
-          },
-          {
-            label: 'Cherry-Pie',
-          },
-          {
-            label: 'Chinese Food',
-          },
-          {
-            label: 'Spaghetti',
+            label: '7.Pan-Cake',
           },
         ],
       },
@@ -230,67 +143,25 @@ export default defineComponent({
         label: 'CAR',
         children: [
           {
-            label: 'Ford',
+            label: '1.Ford',
           },
           {
-            label: 'Range',
+            label: '2.Range',
           },
           {
-            label: 'GTR',
+            label: '3.GTR',
           },
           {
-            label: 'Tesla',
+            label: '4.Tesla',
           },
           {
-            label: 'BMW',
+            label: '5.BMW',
           },
           {
-            label: 'Ferrari',
+            label: '6.Ferrari',
           },
           {
-            label: 'Porshe',
-          },
-          {
-            label: 'Honda',
-          },
-          {
-            label: 'Lamborghini',
-          },
-          {
-            label: 'Toyota',
-          },
-          {
-            label: 'Bentley',
-          },
-          {
-            label: 'Maserati',
-          },
-          {
-            label: 'Audi',
-          },
-          {
-            label: 'Jeep',
-          },
-          {
-            label: 'Subaru',
-          },
-          {
-            label: 'Cadilac',
-          },
-          {
-            label: 'Chrysler',
-          },
-          {
-            label: 'Mazda',
-          },
-          {
-            label: 'Chevrolet-Corvette',
-          },
-          {
-            label: 'Dodge',
-          },
-          {
-            label: 'Hyundai',
+            label: '7.Porshe',
           },
         ],
       },
@@ -298,58 +169,25 @@ export default defineComponent({
         label: 'Movie',
         children: [
           {
-            label: 'Ninja-Turtle',
+            label: '1.Ninja-Turtle',
           },
           {
-            label: 'Shang-Chi',
+            label: '2.Shang-Chi',
           },
           {
-            label: 'Spider-Man',
+            label: '3.Spider-Man',
           },
           {
-            label: 'Bad-Man',
+            label: '4.Bad-Man',
           },
           {
-            label: 'Avenger-Endgame',
+            label: '5.Avenger-Endgame',
           },
           {
-            label: 'Ant-Man',
+            label: '6.Ant-Man',
           },
           {
-            label: 'Ninja-Go',
-          },
-          {
-            label: 'Black-Panther',
-          },
-          {
-            label: 'Spider-Man',
-          },
-          {
-            label: 'Luca-Alberto',
-          },
-          {
-            label: 'E-Cando',
-          },
-          {
-            label: 'Kongfu-Panda',
-          },
-          {
-            label: 'Super-Man',
-          },
-          {
-            label: 'Iron-Man',
-          },
-          {
-            label: 'Power-Ranger',
-          },
-          {
-            label: 'Ben-Ten',
-          },
-          {
-            label: 'Dead-Pool',
-          },
-          {
-            label: 'Red-Bear',
+            label: '7.Ninja-Go',
           },
         ],
       },
@@ -683,14 +521,21 @@ export default defineComponent({
         });
       });
     };
+
+    // ========== Call function select single node Assign =========
     const singleTransferAssignBtn = () => {
-      btnTransferSingleAssignNode();
-      doubleClickParentAssignNode();
+      if (selectedTree.value) {
+        btnTransferSingleAssignNode();
+        doubleClickParentAssignNode();
+      }
     };
 
+    // ========== Call function select single node Unassign =========
     const singleTransferUnassignBtn = () => {
-      btnTransferSingleUnassignNode();
-      doubleClickParentUnassignNode();
+      if (selectedTree.value) {
+        btnTransferSingleUnassignNode();
+        doubleClickParentUnassignNode();
+      }
     };
 
     // ========== Button Unassign Transfer ==========
